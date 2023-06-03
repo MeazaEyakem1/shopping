@@ -1,0 +1,47 @@
+version: '3'
+services:
+  mongodbMuaz:
+    image: "mongo"
+    container_name: mongodbMuaz
+    restart: always
+    ports:
+      - "27011:27017"
+    networks:
+      - mynet
+  product:
+    image: productapp
+    container_name: product
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - mynet
+    depends_on:
+      - mongodbMuaz
+  shopping:
+    image: shoppingapp
+    container_name: shopping
+    restart: always
+    networks:
+      - mynet
+    ports:
+      - "9000:9000"
+    depends_on:
+      - mongodbMuaz
+  restclient:
+    build:
+      context: ./restClient
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - mynet
+    ports:
+      - "830:830"
+    depends_on:
+      - product
+      - shopping
+networks:
+  mynet :
+    driver: bridge
+
+
